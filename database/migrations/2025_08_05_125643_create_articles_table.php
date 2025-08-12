@@ -10,27 +10,31 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('article_sources', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-        });
+        if(!Schema::hasTable("article_sources")) {
+            Schema::create('article_sources', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('slug')->unique();
+            });
+        }
         
-        Schema::create('articles', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('source_id');
-            $table->string('title');
-            $table->string('link');
-            $table->string('image')->nullable();
-            $table->boolean('sended')->default(false);
-            $table->json("data");
-            $table->timestamp('published_at')->nullable();
-            $table->timestamps();
+        if(!Schema::hasTable("articles")) {
+            Schema::create('articles', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('source_id');
+                $table->string('title');
+                $table->string('link');
+                $table->string('image')->nullable();
+                $table->boolean('sended')->default(false);
+                $table->json("data");
+                $table->timestamp('published_at')->nullable();
+                $table->timestamps();
 
-            $table->unique(['source_id', 'link']);
+                $table->unique(['source_id', 'link']);
 
-            $table->foreign('source_id')->references('id')->on('article_sources')->onDelete('cascade');
-        });
+                $table->foreign('source_id')->references('id')->on('article_sources')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -38,11 +42,11 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('articles', function (Blueprint $table) {
-            $table->dropForeign(['source_id']);
-        });
-        Schema::dropIfExists('articles');
+        // Schema::table('articles', function (Blueprint $table) {
+        //     $table->dropForeign(['source_id']);
+        // });
+        // Schema::dropIfExists('articles');
 
-        Schema::dropIfExists('article_sources');
+        // Schema::dropIfExists('article_sources');
     }
 };

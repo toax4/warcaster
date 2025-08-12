@@ -35,7 +35,6 @@ class Kernel extends ConsoleKernel
             Artisan::call('queue:restart');
         })->everyFiveMinutes();
 
-        
         $schedule->call(function () use ($date) {
             Log::info('CRON warhammer-news execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-news-fr');

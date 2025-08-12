@@ -24,6 +24,7 @@ if($article->data["productType"] == "book") {
     $icon = "🧸";
 } elseif($article->data["productType"] == "gamingAccessory") {
     $icon = "🎲";
+    $source_name .= " - " . implode(" / ", $article->data["games"]);
 } elseif($article->data["productType"] == "magazine") {
     $icon = "🗞️";
     $source_name .= " - White Dwarf";

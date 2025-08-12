@@ -14,7 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->string("slug");
             $table->integer("points")->nullable();
-            $table->string('warhammer_id')->nullable()->unique();
+            $table->string('warhammer_id', 36)->nullable();
+
+            $table->unique(['slug', 'warhammer_id']);
         });
 
         Schema::create('battle_formation_translations', function (Blueprint $table) {

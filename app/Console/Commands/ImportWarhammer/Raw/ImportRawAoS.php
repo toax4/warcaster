@@ -28,7 +28,7 @@ class ImportRawAoS extends Command
      */
     public function handle()
     {
-        $file = Storage::disk("temp")->get("dump_aos.json");
+        $file = Storage::disk("temp")->get("dump_aos_1.18.0.json");
         if (!$file) {
             Log::error("Pas de fichier dump_aos.json");
             return;
@@ -42,7 +42,7 @@ class ImportRawAoS extends Command
             // dump($sectionKey, $sectionValue);
             // dump($sectionValue[0]);
 
-            if(empty($sectionValue) || !isset($sectionValue[0])) {
+            if (empty($sectionValue) || !isset($sectionValue[0])) {
                 // dump($sectionKey);
                 continue;
             }
