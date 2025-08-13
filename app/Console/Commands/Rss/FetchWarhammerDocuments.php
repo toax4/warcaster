@@ -158,7 +158,7 @@ class FetchWarhammerDocuments extends Command
                     );
                 }
 
-                dd($document, $documentVersion);
+                // dd($document, $documentVersion);
             }
         }
     }
