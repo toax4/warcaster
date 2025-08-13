@@ -14,10 +14,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            LanguageSeeder::class,
-            PhaseSeeder::class,
+            // LanguageSeeder::class,
+            // WarhammerGameSeeder::class,
+            // PhaseSeeder::class,
             
-            ArticleSourceSeeder::class,
+            // ArticleSourceSeeder::class,
         ]);
     }
 }

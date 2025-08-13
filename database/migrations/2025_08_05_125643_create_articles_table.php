@@ -1,5 +1,6 @@
 <?php
 
+use Database\Seeders\ArticleSourceSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,15 +11,17 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        if(!Schema::hasTable("article_sources")) {
+        if (!Schema::hasTable("article_sources")) {
             Schema::create('article_sources', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
                 $table->string('slug')->unique();
             });
         }
+
+        (new ArticleSourceSeeder())->run();
         
-        if(!Schema::hasTable("articles")) {
+        if (!Schema::hasTable("articles")) {
             Schema::create('articles', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('source_id');
@@ -30,7 +33,7 @@ return new class extends Migration {
                 $table->timestamp('published_at')->nullable();
                 $table->timestamps();
 
-                $table->unique(['source_id', 'link']);
+                // $table->unique(['source_id', 'title', 'link']);
 
                 $table->foreign('source_id')->references('id')->on('article_sources')->onDelete('cascade');
             });

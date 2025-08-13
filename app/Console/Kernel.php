@@ -36,8 +36,9 @@ class Kernel extends ConsoleKernel
         })->everyFiveMinutes();
 
         $schedule->call(function () use ($date) {
-            Log::info('CRON warhammer-news execute a ' . $date);
+            Log::info('CRON warhammer-news & warhammer-documents execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-news-fr');
+            Artisan::call('rss:scrap-warhammer-documents');
         })->hourly();
 
         $schedule->call(function () use ($date) {
@@ -60,6 +61,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () use ($date) {
             Log::info('CRON export des traductions execute a ' . $date);
             Artisan::call("translations:aos:exports all");
+        })->hourly();
+
+        $schedule->call(function () use ($date) {
+            Log::info('CRON clean folder execute a ' . $date);
+            Artisan::call("app:clean-folder", ["path" => $_SERVER["DOCUMENT_ROOT"]."/../storage/app/temp", "interval" => "P1D"]);
         })->hourly();
     }
 

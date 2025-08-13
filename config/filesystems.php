@@ -41,6 +41,11 @@ return [
             'root' => storage_path('app/translations'),
         ],
 
+        'warhammer_documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/warhammer/documents'),
+        ],
+
         'temp' => [
             'driver' => 'local',
             'root' => storage_path('app/temp'),

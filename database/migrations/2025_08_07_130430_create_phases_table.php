@@ -3,6 +3,7 @@
 use App\Models\Phase;
 use App\Models\PhaseTranslation;
 use App\Services\Utils\StringTools;
+use Database\Seeders\PhaseSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -31,10 +32,12 @@ return new class extends Migration {
             $table->foreign('lang_id')->references('id')->on('languages')->onDelete('cascade');
         });
 
-        Schema::table("abilities", function(Blueprint $table) {
+        Schema::table("abilities", function (Blueprint $table) {
             $table->unsignedBigInteger('phase_id')->after("slug")->nullable();
             $table->foreign('phase_id')->references('id')->on('phases')->onDelete('cascade');
         });
+
+        (new PhaseSeeder())->run();
     }
 
     /**

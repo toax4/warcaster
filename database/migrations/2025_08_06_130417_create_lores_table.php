@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string("slug");
             $table->integer("points")->nullable();
-            $table->string('warhammer_id')->nullable();
+            $table->string('warhammer_id', 36)->nullable();
 
             $table->unique(['slug', 'warhammer_id']);
         });

@@ -41,8 +41,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/dev', function () {
-    Artisan::call("import:raw:aos");
+    // phpinfo();
+    // Artisan::call("app:clean-folder", ["path" => $_SERVER["DOCUMENT_ROOT"]."/../storage/app/temp", "interval" => "PT1S", "--deleteFolder" =>true]);
+    Artisan::call("rss:scrap-warhammer-documents");
 });
 Route::get("dev/telegram", function () {
-    
+
 });

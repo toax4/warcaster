@@ -41,8 +41,8 @@ class Article extends Model
         $text = $matches[0];
 
         $text = preg_replace("/(<(\/)?br(\/)?>)+/", "\n", $text);
-        $text = StringTools::cleanHtmlText($text);
+$text = StringTools::cleanHtmlText($text);
 
-        return trim($text);
-    }
+return trim($text);
+}
 }

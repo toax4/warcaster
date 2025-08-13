@@ -18,6 +18,9 @@ class ArticleSourceSeeder extends Seeder
         ArticleSource::firstOrCreate([
             "name" => "Warhammer Shop",
         ]);
+        ArticleSource::firstOrCreate([
+            "name" => "Warhammer Documents",
+        ]);
         // ArticleSource::create([
         //     "name" => "Warhammer - Nouveautés Black Library",
         // ]);
