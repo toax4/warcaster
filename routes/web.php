@@ -18,6 +18,7 @@ use App\Services\Utils\StringTools;
 use App\Services\WarhammerAlgoliaService;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -40,10 +41,12 @@ use Illuminate\Support\Str;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/unit/{unit}', function (Unit $unit) {
+    $unit->withTranslation();
+    return view("admin.unit", compact("unit"));
+});
 Route::get('/dev', function () {
-    // phpinfo();
-    // Artisan::call("app:clean-folder", ["path" => $_SERVER["DOCUMENT_ROOT"]."/../storage/app/temp", "interval" => "PT1S", "--deleteFolder" =>true]);
-    Artisan::call("rss:scrap-warhammer-documents");
+    return view("admin.index");
 });
 Route::get("dev/telegram", function () {
 

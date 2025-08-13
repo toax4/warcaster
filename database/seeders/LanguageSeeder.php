@@ -12,10 +12,10 @@ class LanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        Language::create([ 'label' => "English", 'code' => 'en_US', 'position' => 1 ]);
-        Language::create([ 'label' => "Français", 'code' => 'fr_FR', 'position' => 2 ]);
-        Language::create([ 'label' => "Spanish", 'code' => 'es_ES' ]);
-        Language::create([ 'label' => "German", 'code' => 'de_DE' ]);
-        Language::create([ 'label' => "Italian", 'code' => 'it_IT' ]);
+        Language::create([ 'label' => "English", 'code' => 'en-US', 'position' => 1 ]);
+        Language::create([ 'label' => "Français", 'code' => 'fr-FR', 'position' => 2 ]);
+        Language::create([ 'label' => "Spanish", 'code' => 'es-ES' ]);
+        Language::create([ 'label' => "German", 'code' => 'de-DE' ]);
+        Language::create([ 'label' => "Italian", 'code' => 'it-IT' ]);
     }
 }

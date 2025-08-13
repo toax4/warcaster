@@ -17,12 +17,11 @@ class SetLanguage
     public function handle(Request $request, Closure $next): Response
     {
         // 1. Récupérer la langue demandée
-        $langCode = $request->header('Accept-Language', "en_US");
+        $langCode = $request->getPreferredLanguage();
 
         // 2. Chercher dans la table languages
         $language = null;
         if ($langCode) {
-            $langCode = str_replace("-", "_", $langCode);
             $language = Language::where('code', $langCode)->first();
         }
 

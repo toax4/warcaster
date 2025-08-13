@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\Request;
+
 trait HasTranslations
 {
     public function translation($langId = 1)
@@ -30,8 +32,12 @@ trait HasTranslations
         return $desired;
     }
 
-    public function withTranslation($langId = 1)
+    public function withTranslation($langId = null)
     {
+        if($langId === null) {
+            $langId = request("lang");
+        }
+
         $translations = collect($this->translations);
         $desired = $translations->firstWhere('lang_id', $langId);
         $fallback = $translations->firstWhere('lang_id', 1); // anglais
