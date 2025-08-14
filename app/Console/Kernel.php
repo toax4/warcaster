@@ -39,6 +39,9 @@ class Kernel extends ConsoleKernel
             Log::info('CRON warhammer-news & warhammer-documents execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-news-fr');
             Artisan::call('rss:scrap-warhammer-documents');
+
+            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp/fr_FR"), "interval" => "PT1S"]);
+            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp/en_US"), "interval" => "PT1S"]);
         })->hourly();
 
         $schedule->call(function () use ($date) {
@@ -65,7 +68,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () use ($date) {
             Log::info('CRON clean folder execute a ' . $date);
-            Artisan::call("app:clean-folder", ["path" => $_SERVER["DOCUMENT_ROOT"]."/../storage/app/temp", "interval" => "P1D"]);
+            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp"), "interval" => "P1D"]);
         })->hourly();
     }
 

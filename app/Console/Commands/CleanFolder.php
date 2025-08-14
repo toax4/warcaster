@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use DirectoryIterator;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CleanFolder extends Command
 {
@@ -28,7 +29,8 @@ class CleanFolder extends Command
      */
     public function handle()
     {
-        // dd($this->arguments());
+        Log::info("Clean Folder Path : " . $this->argument("path"));
+
         $date = new DateTime();
         $date->sub(new DateInterval($this->argument("interval")));
 
@@ -39,6 +41,7 @@ class CleanFolder extends Command
     {
         // dd($path, file_exists($path));
         if (!file_exists($path)) {
+            Log::error("Clean Folder Path Not Found : " . $this->argument("path"));
             return;
         }
 
