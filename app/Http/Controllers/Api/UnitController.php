@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\AbilityResource;
 use App\Http\Resources\UnitResource;
+use App\Http\Resources\WeaponResource;
 use App\Models\Unit;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Request as HttpRequest;
@@ -17,7 +19,7 @@ class UnitController extends Controller
      */
     public function index()
     {
-        return UnitResource::collection(Unit::limit(50)->orderByRaw("RAND()")->get());
+        return UnitResource::collection(Unit::limit(5000)->orderByRaw("RAND()")->get());
     }
 
     /**
@@ -70,5 +72,15 @@ class UnitController extends Controller
     public function destroy(Unit $unit)
     {
         //
+    }
+
+    public function weapons(Unit $unit)
+    {
+        return WeaponResource::collection($unit->weapons()->get());
+    }
+    
+    public function abilities(Unit $unit)
+    {
+        return AbilityResource::collection($unit->abilities()->get());
     }
 }

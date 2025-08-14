@@ -16,7 +16,7 @@ class UnitFullResource extends JsonResource
     {
         // return parent::toArray($request);
 
-        $this->withTranslation($request->get('lang'));
+        $this->withTranslation();
 
         $arr = [
             'move' => $this->move,

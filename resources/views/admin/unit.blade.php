@@ -1,9 +1,52 @@
 @extends('admin.layouts.layout')
 
-@section('title', 'Warcaster')
+@section('title', $unit->name)
 
 @section("toolbar")
-@include("admin.layouts.includes.breadcrump")
+<!--begin::Toolbar-->
+<div class="toolbar py-5 pb-lg-15" id="kt_toolbar">
+	<!--begin::Container-->
+	<div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+		<!--begin::Page title-->
+		<div class="page-title d-flex flex-column me-3">
+			<!--begin::Title-->
+			<h1 class="d-flex text-white fw-bold my-1 fs-3">{{ $unit->name }}</h1>
+			<!--end::Title-->
+			<!--begin::Breadcrumb-->
+			<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-1">
+				<!--begin::Item-->
+				<li class="breadcrumb-item text-white opacity-75">
+					<a href="/" class="text-white text-hover-primary">Accueil</a>
+				</li>
+				<!--end::Item-->
+				<!--begin::Item-->
+				<li class="breadcrumb-item">
+					<span class="bullet bg-white opacity-75 w-5px h-2px"></span>
+				</li>
+				<!--end::Item-->
+				<!--begin::Item-->
+				<li class="breadcrumb-item text-white opacity-75">
+					<a href="{{ route('units.index') }}" class="text-white text-hover-primary">
+						Unités
+					</a>
+				</li>
+				<!--end::Item-->
+				<!--begin::Item-->
+				<li class="breadcrumb-item">
+					<span class="bullet bg-white opacity-75 w-5px h-2px"></span>
+				</li>
+				<!--end::Item-->
+				<!--begin::Item-->
+				<li class="breadcrumb-item text-white opacity-75">{{ $unit->name }}</li>
+				<!--end::Item-->
+			</ul>
+			<!--end::Breadcrumb-->
+		</div>
+		<!--end::Page title-->
+	</div>
+	<!--end::Container-->
+</div>
+<!--end::Toolbar-->
 @endsection
 
 @section('content')
@@ -64,9 +107,9 @@
 				id="unitTab" role="tablist">
 				<!--begin::Nav item-->
 				<li class="nav-item">
-					<a class="nav-link text-active-primary py-5 me-6 active" id="home-tab" data-bs-toggle="tab"
-						data-bs-target="#home-tab-pane" role="tab" aria-controls="home-tab-pane"
-						aria-selected="true">Overview</a>
+					<a class="nav-link text-active-primary py-5 me-6 active" id="weapon-abilities-tab"
+						data-bs-toggle="tab" data-bs-target="#weapon-abilities-tab-pane" role="tab"
+						aria-controls="weapon-abilities-tab-pane" aria-selected="true">Armes / Aptitudes</a>
 				</li>
 				<!--end::Nav item-->
 				<!--begin::Nav item-->
@@ -76,31 +119,6 @@
 						aria-selected="true">Targets</a>
 				</li>
 				<!--end::Nav item-->
-				<!--begin::Nav item-->
-				<li class="nav-item">
-					<a class="nav-link text-active-primary py-5 me-6" href="apps/projects/budget.html">Budget</a>
-				</li>
-				<!--end::Nav item-->
-				<!--begin::Nav item-->
-				<li class="nav-item">
-					<a class="nav-link text-active-primary py-5 me-6" href="apps/projects/users.html">Users</a>
-				</li>
-				<!--end::Nav item-->
-				<!--begin::Nav item-->
-				<li class="nav-item">
-					<a class="nav-link text-active-primary py-5 me-6" href="apps/projects/files.html">Files</a>
-				</li>
-				<!--end::Nav item-->
-				<!--begin::Nav item-->
-				<li class="nav-item">
-					<a class="nav-link text-active-primary py-5 me-6" href="apps/projects/activity.html">Activity</a>
-				</li>
-				<!--end::Nav item-->
-				<!--begin::Nav item-->
-				<li class="nav-item">
-					<a class="nav-link text-active-primary py-5 me-6" href="apps/projects/settings.html">Settings</a>
-				</li>
-				<!--end::Nav item-->
 			</ul>
 			<!--end::Nav-->
 		</div>
@@ -108,8 +126,8 @@
 	<!--end::Navbar-->
 	<!--begin::Row-->
 	<div class="tab-content" id="unitTabContent">
-		<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
-			tabindex="0">
+		<div class="tab-pane fade show active" id="weapon-abilities-tab-pane" role="tabpanel"
+			aria-labelledby="weapon-abilities-tab" tabindex="0">
 			<div class="row gx-6 gx-xl-9">
 				<div class="col-xl-12">
 					<div class="card mb-5 mb-xxl-8">
@@ -121,7 +139,13 @@
 							</div>
 						</div>
 						<div class="card-body">
-
+							<div class="row">
+								<div class="col-12">
+									<table
+										class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bold dataTable"
+										id="weapons_dt"></table>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -135,7 +159,13 @@
 							</div>
 						</div>
 						<div class="card-body">
-
+							<div class="row">
+								<div class="col-12">
+									<table
+										class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bold dataTable"
+										id="abilites_dt"></table>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -155,7 +185,156 @@
 
 @section("styles")
 @include("admin.layouts.styles.default")
+@include("admin.layouts.styles.global")
 @endsection
 @section("scripts")
 @include("admin.layouts.scripts.default")
+@include("admin.layouts.scripts.datatable")
+
+<script>
+	$(function() {
+        var weapons_dt = $("#weapons_dt").DataTable({
+			dom:"<'row'<'col-12'tr>>",
+			info: false,
+			searching: false,
+			paging: false,
+			buttons: [],
+            ajax: {
+                type: "GET",
+                url: "{{ route('api.units.weapons', ['unit' => $unit->id]) }}",
+                data: function(d) {},
+                dataSrc: function(data) {
+                    return data.data;
+                }
+            },
+            columns: [
+                {
+                    data: "name",
+                    title: "Nom",
+                    className: "clickable"
+                },
+                {
+                    data: "range",
+                    title: "Portée",
+					width: "5%",
+                    className: "clickable text-center"
+                },
+                {
+                    data: "attack",
+                    title: "Attaque",
+					width: "5%",
+                    className: "clickable text-center"
+                },
+                {
+                    data: "hit",
+                    title: "Touche",
+					width: "5%",
+                    className: "clickable text-center"
+                },
+                {
+                    data: "wound",
+                    title: "Blessure",
+					width: "5%",
+                    className: "clickable text-center"
+                },
+                {
+                    data: "rend",
+                    title: "Perforation",
+					width: "5%",
+                    className: "clickable text-center"
+                },
+                {
+                    data: "damage",
+                    title: "Dégâts",
+					width: "5%",
+                    className: "clickable text-center"
+                },
+                {
+                    data: "abilities",
+                    title: "Aptitude(s)",
+					width: "25%",
+                    className: "clickable",
+					createdCell: function(td, cellData, rowData) {
+                        $(td).html(cellData.map((ability) => ability.name).join(", "));
+					}
+                },
+            ],
+            order: [
+                [0, "asc"]
+            ],
+            drawCallback: function(settings, json) {
+                $('[data-toggle="tooltip"]').tooltip();
+
+                $('#weapons_dt tbody').on('click', '.clickable', function() {
+                    var data = $('#weapons_dt').DataTable().row( $(this).parents("tr") ).data();
+                    // window.location.href = "{{ route('units.index') }}/" + data.id;
+                });
+            }
+        });
+        var abilites_dt = $("#abilites_dt").DataTable({
+			dom:"<'row'<'col-12'tr>>",
+			info: false,
+			searching: false,
+			paging: false,
+			buttons: [],
+            ajax: {
+                type: "GET",
+                url: "{{ route('api.units.abilities', ['unit' => $unit->id]) }}",
+                data: function(d) {},
+                dataSrc: function(data) {
+                    return data.data;
+                }
+            },
+            columns: [
+                {
+                    data: "name",
+                    title: "Nom",
+                    className: "clickable"
+                },
+                {
+                    data: "phase.displayOrder",
+                    title: "Phase",
+					width: "25%",
+                    className: "clickable",
+					createdCell: function(td, cellData, rowData) {
+						$(td).html(rowData.phase.name);
+
+						$(td).prepend($("<i>").addClass("fa-solid fa-square me-2").css("color", rowData.phase.hexcolor))
+					}
+                },
+                {
+                    data: "lore",
+                    title: "Lore",
+					width: "25%",
+                    className: "clickable fst-italic"
+                },
+                {
+                    data: "declare",
+                    title: "Annonce",
+					width: "25%",
+                    className: "clickable"
+                },
+                {
+                    data: "effect",
+                    title: "Effet",
+					width: "25%",
+                    className: "clickable"
+                },
+            ],
+            order: [
+                [1, "asc"],
+                [0, "asc"]
+            ],
+            drawCallback: function(settings, json) {
+                $('[data-toggle="tooltip"]').tooltip();
+
+                $('#abilites_dt tbody').on('click', '.clickable', function() {
+                    var data = $('#abilites_dt').DataTable().row( $(this).parents("tr") ).data();
+                    // window.location.href = "{{ route('units.index') }}/" + data.id;
+                });
+            }
+        });
+    });
+
+</script>
 @endsection

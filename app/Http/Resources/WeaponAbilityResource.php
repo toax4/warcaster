@@ -14,7 +14,7 @@ class WeaponAbilityResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->withTranslation($request->get('lang'));
+        $this->withTranslation();
 
         $arr = [
             'id' => $this->id,

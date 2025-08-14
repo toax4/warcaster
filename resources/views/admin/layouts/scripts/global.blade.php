@@ -1,0 +1,1 @@
+{{-- <script src="{{ assetPlugin('fontawesome-7.0.0/js/all.js') }}"></script> --}}

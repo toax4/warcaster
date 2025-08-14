@@ -14,7 +14,7 @@ class KeywordResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->withTranslation($request->get('lang'));
+        $this->withTranslation();
 
         $arr = [
             'label' => $this->label

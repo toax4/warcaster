@@ -26,4 +26,9 @@ class Ability extends Model
     {
         return $this->hasMany(AbilityTranslation::class)->orderBy("lang_id", "asc");
     }
+
+    public function phase()
+    {
+        return $this->belongsTo(Phase::class, 'phase_id');
+    }
 }
