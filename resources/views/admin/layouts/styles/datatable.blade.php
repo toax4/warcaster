@@ -1,0 +1,1 @@
+<link href="{{ assetPlugin('custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />

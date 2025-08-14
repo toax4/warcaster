@@ -14,9 +14,10 @@ class UnitResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->withTranslation($request->get('lang'));
+        $this->withTranslation();
 
         $arr = [
+            'id' => $this->id,
             'move' => $this->move,
             'save' => $this->save,
             'control' => $this->control,
@@ -27,7 +28,8 @@ class UnitResource extends JsonResource
             'name' => $this->name,
             'subname' => $this->subname,
             'lore' => $this->lore,
-            'keywords' => KeywordResource::collection($this->keywords)
+            'keywords' => KeywordResource::collection($this->keywords),
+            'factions' => FactionResource::collection($this->factions),
         ];
 
         return $arr;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UnitController;
 use App\Http\Resources\AbilityResource;
 use App\Http\Resources\UnitFullResource;
 use App\Http\Resources\UnitResource;
@@ -41,10 +42,22 @@ use Illuminate\Support\Str;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/unit/{unit}', function (Unit $unit) {
-    $unit->withTranslation();
-    return view("admin.unit", compact("unit"));
-});
+
+
+Route::prefix('/units')
+    ->name('units.')
+    ->controller(UnitController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+
+        Route::prefix('/{unit}')
+        ->group(function () {
+            Route::get('/', 'show')->name('show');
+            Route::post('/', 'store')->name('store');
+            Route::put('/', 'update')->name('update');
+        });
+    });
+
 Route::get('/dev', function () {
     return view("admin.index");
 });

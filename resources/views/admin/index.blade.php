@@ -2000,8 +2000,8 @@
                         <!--begin::Symbol-->
                         <div class="symbol symbol-50px me-5">
                             <span class="symbol-label">
-                                <img src="{{ assetImg('svg/brand-logos/kickstarter.svg') }}" class="h-50 align-self-center"
-                                    alt="" />
+                                <img src="{{ assetImg('svg/brand-logos/kickstarter.svg') }}"
+                                    class="h-50 align-self-center" alt="" />
                             </span>
                         </div>
                         <!--end::Symbol-->
@@ -2026,4 +2026,11 @@
     <!--end::Row-->
 </div> --}}
 <!--end::Post-->
+@endsection
+
+@section("styles")
+@include("admin.layouts.styles.default")
+@endsection
+@section("scripts")
+@include("admin.layouts.scripts.default")
 @endsection
