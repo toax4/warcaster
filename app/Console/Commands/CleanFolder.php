@@ -55,9 +55,6 @@ class CleanFolder extends Command
             # On ne change rien sur les dossiers
             if ($f->isDir()) {
                 $this->cleanFolder($f->getPathname(), $date);
-                if ($this->option('deleteFolder')) {
-                    rmdir($f->getPathname());
-                }
                 continue;
             }
         
@@ -65,6 +62,10 @@ class CleanFolder extends Command
             if ($d <= $date) {
                 unlink($f->getPathname());
             }
+        }
+
+        if ($this->option('deleteFolder')) {
+            rmdir($path);
         }
     }
 }

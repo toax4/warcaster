@@ -41,7 +41,7 @@ class SendTelegramArticle implements ShouldQueue
         $telegramService = new TelegramService();
         $result = $telegramService->sendWithImage(View::make($this->article->data["view"], ["article" => $this->article]), $localPath);
 
-        if($result->status() != 200) {
+        if ($result->status() != 200) {
             dd($result->json(), $result);
         }
 
@@ -56,10 +56,10 @@ class SendTelegramArticle implements ShouldQueue
 
     private function downloadImage(string $url): string
     {
-        $fileName = 'temp/' . basename($url) . '.jpg';
+        $fileName = 'temp/' . basename($url);
         // dump($fileName);
 
-        if(Storage::exists($fileName)) {
+        if (Storage::exists($fileName)) {
             Storage::delete($fileName);
         }
 

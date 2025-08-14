@@ -36,16 +36,16 @@ class Kernel extends ConsoleKernel
         })->everyFiveMinutes();
 
         $schedule->call(function () use ($date) {
-            Log::info('CRON warhammer-news & warhammer-documents execute a ' . $date);
+            Log::channel('cron')->info('CRON warhammer-news & warhammer-documents execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-news-fr');
             Artisan::call('rss:scrap-warhammer-documents');
 
-            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp/fr_FR"), "interval" => "PT1S"]);
-            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp/en_US"), "interval" => "PT1S"]);
+            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp/fr_FR"), "interval" => "PT1S", "--cleanFolder"]);
+            Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp/en_US"), "interval" => "PT1S", "--cleanFolder"]);
         })->hourly();
 
         $schedule->call(function () use ($date) {
-            Log::info('CRON warhammer-news-units execute a ' . $date);
+            Log::channel('cron')->info('CRON warhammer-news-units execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-shop');
         })
         ->saturdays()
@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel
         ->hourly();
 
         $schedule->call(function () use ($date) {
-            // Log::info('CRON send telegram news execute a ' . $date);
+            // Log::channel('cron')->info('CRON send telegram news execute a ' . $date);
             $article = Article::where("sended", false)->orderByRaw("RAND()")->first();
 
             if ($article) {
@@ -62,12 +62,12 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         $schedule->call(function () use ($date) {
-            Log::info('CRON export des traductions execute a ' . $date);
+            Log::channel('cron')->info('CRON export des traductions execute a ' . $date);
             Artisan::call("translations:aos:exports all");
         })->hourly();
 
         $schedule->call(function () use ($date) {
-            Log::info('CRON clean folder execute a ' . $date);
+            Log::channel('cron')->info('CRON clean folder execute a ' . $date);
             Artisan::call("app:clean-folder", ["path" => base_path("/storage/app/temp"), "interval" => "P1D"]);
         })->hourly();
     }
