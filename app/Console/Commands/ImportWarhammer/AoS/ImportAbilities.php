@@ -21,7 +21,7 @@ class ImportAbilities extends Command
      *
      * @var string
      */
-    protected $signature = 'import:aos:abilities';
+    protected $signature = 'import:aos:abilities {--limit=}';
 
     /**
      * The console command description.
@@ -49,6 +49,9 @@ class ImportAbilities extends Command
                     wa.*
                 FROM warscroll_ability wa;
         ");
+        if ($this->option("limit")) {
+            $abilities = array_slice($abilities, 0, $this->option("limit"));
+        }
         foreach ($abilities as $ability) {
             $ability = (array) $ability;
 
@@ -80,7 +83,8 @@ class ImportAbilities extends Command
             ImportAbilityJob::dispatch(
                 find: $findAbility,
                 data: [
-                    'phase_id' => $ability['phase'],
+                    'phase' => $ability['phase'],
+                    'phase_detail' => $ability["phaseDetails"],
                     'cp_cost' => $ability['cpCost'] ?? null,
                     'points' => $ability['points'] ?? null,
                 ]
@@ -133,6 +137,9 @@ class ImportAbilities extends Command
                 FROM warscroll w
                 INNER JOIN warscroll_ability wa ON wa.warscrollId = w.id;
         ");
+        if ($this->option("limit")) {
+            $pivotsUnitAbility = array_slice($pivotsUnitAbility, 0, $this->option("limit"));
+        }
         foreach ($pivotsUnitAbility as $pivotUnitAbility) {
             $pivotUnitAbility = (array) $pivotUnitAbility;
 

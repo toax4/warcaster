@@ -25,6 +25,11 @@ return new class extends Migration {
             $table->foreign('phase_detail_id')->references('id')->on('phase_details')->onDelete('cascade');
             $table->foreign('lang_id')->references('id')->on('languages')->onDelete('cascade');
         });
+
+        Schema::table("abilities", function (Blueprint $table) {
+            $table->unsignedBigInteger('phase_detail_id')->after("phase_id")->nullable();
+            $table->foreign('phase_detail_id')->references('id')->on('phase_details')->onDelete('cascade');
+        });
     }
 
     /**
@@ -32,6 +37,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::table('abilities', function (Blueprint $table) {
+            $table->dropForeign(['phase_detail_id']);
+        });
+
         Schema::table('phase_detail_translations', function (Blueprint $table) {
             $table->dropForeign(['phase_detail_id']);
             $table->dropForeign(['lang_id']);

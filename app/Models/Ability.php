@@ -14,6 +14,7 @@ class Ability extends Model
 
     protected $fillable = [
         'phase_id',
+        'phase_detail_id',
         'slug',
         'cp_cost',
         'points',
@@ -30,5 +31,10 @@ class Ability extends Model
     public function phase()
     {
         return $this->belongsTo(Phase::class, 'phase_id');
+    }
+
+    public function phaseDetail()
+    {
+        return $this->belongsTo(PhaseDetail::class, 'phase_detail_id');
     }
 }

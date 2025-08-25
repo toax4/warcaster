@@ -93,7 +93,8 @@ class ImportBattleFormations extends Command
             ImportAbilityJob::dispatch(
                 find: $findAbility,
                 data: [
-                    'phase_id' => $battleFormationAbility['phase'],
+                    'phase' => $battleFormationAbility['phase'],
+                    'phase_detail' => $battleFormationAbility["phaseDetails"],
                     'cp_cost' => $battleFormationAbility['cpCost'] ?? null,
                     // 'points' => $ability['points'] ?? null,
                 ]

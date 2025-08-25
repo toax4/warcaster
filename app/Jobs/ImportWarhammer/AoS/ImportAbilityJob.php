@@ -4,6 +4,7 @@ namespace App\Jobs\ImportWarhammer\AoS;
 
 use App\Models\Ability;
 use App\Models\Phase;
+use App\Models\PhaseDetail;
 use App\Services\Utils\StringTools;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,8 +32,8 @@ class ImportAbilityJob extends AoSImportJob implements ShouldQueue
     public function handle()
     {
         // dd($this->data);
-        if (isset($this->data["phase_id"]) && !empty($this->data["phase_id"])) {
-            $phase = Phase::firstOrCreate(["slug" => StringTools::slug(Str::snake($this->data["phase_id"]))]);
+        if (isset($this->data["phase"]) && !empty($this->data["phase"])) {
+            $phase = Phase::firstOrCreate(["slug" => StringTools::slug(Str::snake($this->data["phase"]))]);
 
             if ($phase->wasRecentlyCreated) {
                 ImportPhaseTranslationJob::dispatch(
@@ -42,13 +43,33 @@ class ImportAbilityJob extends AoSImportJob implements ShouldQueue
                     ],
                     langId: 1,
                     data: [
-                        'name' => $this->data['phase_id'],
+                        'name' => $this->data['phase'],
                     ]
                 );
             }
 
-            // dd($this->data["phase_id"], StringTools::slug(Str::snake($this->data["phase_id"])) ,$phase, $this->data);
+            // dd($this->data["phase"], StringTools::slug(Str::snake($this->data["phase"])) ,$phase, $this->data);
             $this->data["phase_id"] = $phase !== null ? $phase->id : null;
+        }
+
+        if (isset($this->data["phase_detail"]) && !empty($this->data["phase_detail"])) {
+            $phaseDetail = PhaseDetail::firstOrCreate(["slug" => StringTools::slug(Str::snake($this->data["phase_detail"]))]);
+
+            if ($phaseDetail->wasRecentlyCreated) {
+                ImportPhaseDetailTranslationJob::dispatch(
+                    phase_detail: [
+                        "slug" => $phaseDetail->slug,
+                        "id" => $phaseDetail->id,
+                    ],
+                    langId: 1,
+                    data: [
+                        'name' => $this->data['phase_detail'],
+                    ]
+                );
+            }
+
+            // dd($this->data["phase_id"], StringTools::slug(Str::snake($this->data["phase_id"])) ,$phaseDetail, $this->data);
+            $this->data["phase_detail_id"] = $phaseDetail !== null ? $phaseDetail->id : null;
         }
         
         $unit = Ability::updateOrCreate(

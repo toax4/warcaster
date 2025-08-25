@@ -63,7 +63,8 @@ class ImportBattleTraits extends Command
             ImportAbilityJob::dispatch(
                 find: $findAbility,
                 data: [
-                    'phase_id' => $ability['phase'],
+                    'phase' => $ability['phase'],
+                    'phase_detail' => $ability["phaseDetails"],
                     'cp_cost' => $ability['cpCost'] ?? null,
                     'points' => $ability['points'] ?? null,
                 ]
