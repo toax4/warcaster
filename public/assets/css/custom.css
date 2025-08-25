@@ -1,3 +1,25 @@
 .clickable {
     cursor: pointer;
 }
+
+.background-phase-start_of_turn {
+    background: linear-gradient(#0b0802, #181615);
+}
+.background-phase-hero_phase {
+    background: linear-gradient(#74581e, #aa9030);
+}
+.background-phase-movement_phase {
+    background: linear-gradient(#5c5350, #7c7a78);
+}
+.background-phase-shooting_phase {
+    background: linear-gradient(#06363f, #004458);
+}
+.background-phase-charge_phase {
+    background: linear-gradient(#93411e, #bb5e1f);
+}
+.background-phase-combat_phase {
+    background: linear-gradient(#681616, #850f17);
+}
+.background-phase-end_of_turn {
+    background: linear-gradient(#4c2b54, #5d3270);
+}

@@ -18,10 +18,12 @@ class SetLanguage
     {
         // 1. Récupérer la langue demandée
         $langCode = $request->getPreferredLanguage();
+        // dd($langCode);
 
         // 2. Chercher dans la table languages
         $language = null;
         if ($langCode) {
+            $langCode = str_replace("_", "-", $langCode);
             $language = Language::where('code', $langCode)->first();
         }
 
@@ -29,6 +31,7 @@ class SetLanguage
         if (!$language) {
             $language = Language::find(1);
         }
+        // dd($language);
 
         // 4. Injecter dans la Request
         $request->merge(['lang' => $language->id]);

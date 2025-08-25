@@ -15,6 +15,7 @@ use App\Models\Rss\Article;
 use App\Models\Rss\ArticleSource;
 use App\Models\Unit;
 use App\Models\UnitAbility;
+use App\Models\UnitTranslation;
 use App\Services\Utils\StringTools;
 use App\Services\WarhammerAlgoliaService;
 use Illuminate\Database\Eloquent\Casts\Json;
@@ -43,6 +44,49 @@ Route::get('/', function () {
     return view('admin.index');
 });
 
+
+Route::prefix('/team')
+    ->name('team.')
+    ->controller(UnitController::class)
+    ->group(function () {
+        Route::get('/', function () {
+            $phases = Phase::whereBetween("displayOrder", [1, 100])->orderBy("displayOrder", "asc")->get()->map(fn ($phase) => $phase->withTranslation());
+            return view("admin.team_index", ["phases" => $phases]);
+        })->name("index");
+        Route::post('/search', function (Request $request) {
+            $hits = UnitTranslation::search($request->input("search"))->take(25)->raw()["results"];
+            
+            $ids = collect($hits)->pluck('unit_id')->unique()->values();
+
+            $units = Unit::whereIn('id', $ids)->get();
+
+            // Réordonner selon l’ordre des hits
+            $order = $ids->flip(); // map id → position
+            $units = $units->sortBy(fn ($u) => $order[$u->id])->values();
+            // dd($units);
+
+            return UnitFullResource::collection($units);
+        })->name("search");
+        Route::post('/fetch/units', function (Request $request) {
+            $units = Unit::whereIn("id", explode(",", $request->input("ids")))->get();
+            // dd($request->all());
+
+            return UnitFullResource::collection($units);
+        })->name("fetch.units");
+        // Route::post('/fetch/abilities', function (Request $request) {
+        //     $units = Unit::whereIn("id", explode(",", $request->input("ids")))->get();
+        //     // dd($request->all());
+
+        //     $abilities = [];
+        //     foreach ($units as $unit) {
+        //         foreach ($unit->abilities as $ability) {
+        //             $abilities[] = $ability;
+        //         }
+        //     }
+
+        //     return AbilityResource::collection($abilities);
+        // })->name("fetch.abilities");
+    });
 
 Route::prefix('/units')
     ->name('units.')

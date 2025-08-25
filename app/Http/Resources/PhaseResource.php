@@ -20,6 +20,7 @@ class PhaseResource extends JsonResource
             'name' => $this->name,
             'hexcolor' => $this->hexcolor,
             'displayOrder' => $this->displayOrder,
+            'slug' => $this->slug,
         ];
 
         return $arr;

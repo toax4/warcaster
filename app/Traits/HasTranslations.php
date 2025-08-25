@@ -34,7 +34,7 @@ trait HasTranslations
 
     public function withTranslation($langId = null)
     {
-        if($langId === null) {
+        if ($langId === null) {
             $langId = request("lang");
         }
 

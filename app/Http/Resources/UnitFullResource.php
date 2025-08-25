@@ -19,6 +19,7 @@ class UnitFullResource extends JsonResource
         $this->withTranslation();
 
         $arr = [
+            'id' => $this->id,
             'move' => $this->move,
             'save' => $this->save,
             'control' => $this->control,
@@ -33,7 +34,8 @@ class UnitFullResource extends JsonResource
             'weapons' => WeaponResource::collection($this->weapons->each(function ($weapon) {
                 return $weapon->withAbilities();
             })),
-            'abilites' => AbilityResource::collection($this->abilities),
+            'abilities' => AbilityResource::collection($this->abilities),
+            'factions' => FactionResource::collection($this->factions),
 
         ];
 
