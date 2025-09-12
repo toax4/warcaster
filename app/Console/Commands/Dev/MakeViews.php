@@ -131,7 +131,7 @@ class MakeViews extends Command
             viewName:"phase_detail_with_translations",
             select:["t.id", "t.slug"],
             table: "phase_details",
-            joinTemplate: "LEFT JOIN phase_detail_translations CODE ON CODE.phase_detail_id = t.id AND CODE.lang_id = (SELECT id FROM languages WHERE code = 'CODE')",
+            joinTemplate: "LEFT JOIN phase_detail_translations CODE ON CODE.phase_detail_id = t.id AND CODE.lang_id = (SELECT id FROM languages WHERE code = 'CODE_LANG')",
             fields: ['name'],
             order:"t.slug asc"
         );
@@ -151,14 +151,21 @@ class MakeViews extends Command
         $tables = [$table." t"];
 
         foreach ($langs as $id => $code) {
-            $tables[] = str_replace("CODE", $code, $joinTemplate);
+            $codeRef = str_replace("-", "_", $code);
+            $tables[] = str_replace(["CODE_LANG", "CODE"], [$code, $codeRef], $joinTemplate);
             
             foreach ($fields as $field) {
-                $select[] = "{$code}.{$field} AS {$code}_{$field}";
+                $select[] = "{$codeRef}.{$field} AS {$codeRef}_{$field}";
             }
         }
 
         // dump("CREATE OR REPLACE VIEW $viewName AS SELECT ".implode(",", $select)." FROM {$join}".($order ? "ORDER BY $order" : "")."");
+        dump("
+            CREATE OR REPLACE VIEW $viewName AS
+            SELECT ".implode(", ", $select)."
+            FROM ".implode(" ", $tables)."
+            ".($order ? "ORDER BY $order" : "")."
+        ");
         DB::statement("
             CREATE OR REPLACE VIEW $viewName AS
             SELECT ".implode(", ", $select)."

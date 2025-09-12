@@ -11,16 +11,18 @@ class TelegramService
     protected string $botToken;
     protected string $chatId;
 
-    public function __construct()
+    public function __construct($chatId = null)
     {
         $this->botToken = config('services.telegram.bot_token');
-        $this->chatId   = config('services.telegram.chat_id');
+        $this->chatId   = $chatId ?? config('services.telegram.chat_id');
     }
 
     public function sendWithImage($html, $imageUrl)
     {
         $res = Http::attach(
-            'photo', file_get_contents($imageUrl), 'image.jpg'
+            'photo',
+            file_get_contents($imageUrl),
+            'image.jpg'
         )->post("https://api.telegram.org/bot".$this->botToken."/sendPhoto", [
             'chat_id' => $this->chatId,
             'parse_mode' => 'HTML',

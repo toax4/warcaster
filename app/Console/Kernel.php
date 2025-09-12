@@ -22,22 +22,23 @@ class Kernel extends ConsoleKernel
     {
         $date = (new DateTime('now', new DateTimeZone("Europe/Paris")))->format("H:i:s d-m-Y");
 
-        if (app()->environment('production')) {
+        if (config('app.env') == 'production') {
             $schedule->call(function () use ($date) {
+                // Log::channel('cron')->info('CRON queue:work execute a ' . $date);
                 Artisan::call('queue:work --queue=high,default,imports --max-time=55');
             })
             ->everyMinute()
-            ->name('worker:1')
-            ->withoutOverlapping();
+            ->name('worker:1');
+            // ->withoutOverlapping();
         }
-
+        
         $schedule->call(function () use ($date) {
             Artisan::call('queue:restart');
         })->everyFiveMinutes();
 
         $schedule->call(function () use ($date) {
             Log::channel('cron')->info('CRON warhammer-news execute a ' . $date);
-            Artisan::call('rss:scrap-warhammer-news-fr');
+            Artisan::call('rss:scrap-warhammer-news');
         })->hourly();
 
         $schedule->call(function () use ($date) {
@@ -58,8 +59,9 @@ class Kernel extends ConsoleKernel
         ->hourly();
 
         $schedule->call(function () use ($date) {
-            // Log::channel('cron')->info('CRON send telegram news execute a ' . $date);
-            $article = Article::where("sended", false)->orderByRaw("RAND()")->first();
+            Log::channel('cron')->info('CRON send telegram news execute a ' . $date);
+            // $article = Article::where("sended", false)->orderByRaw("RAND()")->first();
+            $article = Article::where("sended", 0)->first();
 
             if ($article) {
                 SendTelegramArticle::dispatch(article: $article);

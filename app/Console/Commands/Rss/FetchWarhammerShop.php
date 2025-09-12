@@ -37,17 +37,61 @@ class FetchWarhammerShop extends Command
         $source = ArticleSource::where("slug", "warhammer_shop")->first();
         $datas = [];
 
-        $response = WarhammerAlgoliaService::fetch([
+        $searches = [
             [
-                'isNewRelease:true',
-                'isPreOrder:true',
+                "data" => [
+                    [
+                        'isNewRelease:true',
+                        'isPreOrder:true',
+                    ],
+                    [
+                        "GameSystemsRoot.lvl0:Warhammer 40,000",
+                    ],
+                ],
+                "channel" => env("TELEGRAM_CHAT_ID_SHOP_40K_FR"),
             ],
             [
-                "GameSystemsRoot.lvl0:Warhammer 40,000",
-                "GameSystemsRoot.lvl0:Age of Sigmar",
+                "data" => [
+                    [
+                        'isNewRelease:true',
+                        'isPreOrder:true',
+                    ],
+                    [
+                        "GameSystemsRoot.lvl0:Age of Sigmar",
+                    ],
+                ],
+                "channel" => env("TELEGRAM_CHAT_ID_SHOP_AOS_FR"),
             ],
-        ]);
-        array_push($datas, ...($response->json())["results"][0]["hits"]);
+        ];
+
+        foreach ($searches as $search) {
+            $response = WarhammerAlgoliaService::fetch($search["data"]);
+
+            foreach (($response->json())["results"][0]["hits"] as $data) {
+                // dd($data);
+                if (preg_match('/\(anglais\)/mi', $data["name"])) {
+                    // Skip si c'est en anglais
+                    continue;
+                }
+
+                $data["channel"] = $search["channel"];
+
+                $art = Article::firstOrCreate(
+                    [
+                        'link' => $this->buildShopLink($data),
+                        'source_id' => $source->id,
+                    ],
+                    [
+                        'title' => $data["name"],
+                        'image' => "https://www.warhammer.com".$data["images"][0],
+                        'published_at' => now(),
+                        'data' => $this->buildJson($data),
+                    ]
+                );
+            }
+        }
+
+        // array_push($datas, ...($response->json())["results"][0]["hits"]);
 
         $response = WarhammerAlgoliaService::fetch([
             [
@@ -61,15 +105,17 @@ class FetchWarhammerShop extends Command
             ]
         ]);
         // dd(($response->json())["results"][0]["hits"]);
-        array_push($datas, ...($response->json())["results"][0]["hits"]);
+        // array_push($datas, ...($response->json())["results"][0]["hits"]);
 
         // dd($datas);
-        foreach ($datas as $data) {
+        foreach (($response->json())["results"][0]["hits"] as $data) {
             // dd($data);
             if (preg_match('/\(anglais\)/mi', $data["name"])) {
                 // Skip si c'est en anglais
                 continue;
             }
+
+            $data["channel"] = env("TELEGRAM_CHAT_ID");
 
             $art = Article::firstOrCreate(
                 [
@@ -88,28 +134,31 @@ class FetchWarhammerShop extends Command
         $this->info("✅ " . count($datas) . " articles récupérés.");
     }
 
-    private function buildJson($data) {
+    private function buildJson($data)
+    {
         $json = [
             "view" => "rss.telegram.shop",
             "title"=> $data["name"],
             "price"=> ($data["ctPrice"]["centAmount"] /100),
-                "summary"=> StringTools::cleanHtmlText(preg_split('/(<(\/)?br(\/)?>)+/', $data["description"])[0]),
-            "shop_url"=> "https://www.warhammer.com/fr-FR/shop/".$data["slug"],
-            "serie"=> $data["series"] ?? null,
-            "productType" => $data["productType"],
-            "games" => $data["GameSystemsRoot"]["lvl0"] ?? null,
-            "isNewRelease" => $data['isNewRelease'],
-            "isPreOrder" => $data['isPreOrder'],
-        ];
+            "summary"=> StringTools::cleanHtmlText(preg_split('/(<(\/)?br(\/)?>)+/', $data["description"])[0]),
+"shop_url"=> "https://www.warhammer.com/fr-FR/shop/".$data["slug"],
+"serie"=> $data["series"] ?? null,
+"productType" => $data["productType"],
+"games" => $data["GameSystemsRoot"]["lvl0"] ?? null,
+"isNewRelease" => $data['isNewRelease'],
+"isPreOrder" => $data['isPreOrder'],
+"channel" => $data["channel"],
+];
 
-        if(in_array($data["productType"], ["book"])) {
+        if (in_array($data["productType"], ["book"])) {
             $json["summary"] = Article::extractWarhammerSummary($data["description"]);
         }
 
         return $json;
     }
 
-    private function buildShopLink($data) {
+    private function buildShopLink($data)
+    {
         return "https://www.warhammer.com/fr-FR/shop/".$data["slug"];
     }
 }

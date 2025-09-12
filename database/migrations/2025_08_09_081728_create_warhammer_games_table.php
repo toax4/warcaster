@@ -11,14 +11,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('warhammer_games', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->string("slug");
-            // $table->timestamps();
-        });
-
-        (new WarhammerGameSeeder())->run();
+        if (!Schema::hasTable("warhammer_document_versions")) {
+            Schema::create('warhammer_games', function (Blueprint $table) {
+                $table->id();
+                $table->string("name");
+                $table->string("slug");
+                // $table->timestamps();
+            });
+    
+            (new WarhammerGameSeeder())->run();
+        }
     }
 
     /**
@@ -26,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('warhammer_games');
+        // Schema::dropIfExists('warhammer_games');
     }
 };

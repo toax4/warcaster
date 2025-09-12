@@ -32,13 +32,13 @@ class SendTelegramArticle implements ShouldQueue
     public function handle()
     {
         $telegramToken = config('services.telegram.bot_token');
-        $chatId = config('services.telegram.chat_id');
+        $chatId = $this->article->data["channel"] ?? config('services.telegram.chat_id');
 
         $localPath = $this->downloadImage($this->article->image);
         // $json = json_decode($this->article->data, true);
 
         // 2️⃣ Envoi du message avec l'image
-        $telegramService = new TelegramService();
+        $telegramService = new TelegramService(chatId: $chatId);
         $result = $telegramService->sendWithImage(View::make($this->article->data["view"], ["article" => $this->article]), $localPath);
 
         if ($result->status() != 200) {

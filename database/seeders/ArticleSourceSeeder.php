@@ -13,7 +13,7 @@ class ArticleSourceSeeder extends Seeder
     public function run(): void
     {
         ArticleSource::firstOrCreate([
-            "name" => "Warhammer - NEWS Fr",
+            "name" => "Warhammer - News",
         ]);
         ArticleSource::firstOrCreate([
             "name" => "Warhammer Shop",

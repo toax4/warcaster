@@ -37,15 +37,20 @@ if($article->data["productType"] == "book") {
 ?>
 
 
-<i>{{ $source_name }}</i> 
+<i>{{ $source_name }}</i>
 {{ $icon }} <b>{{ $article->data["title"] }}</b>
 
 <b>Prix :</b> {{ number_format($article->data["price"], 2, ",", "") }} €
 
 @if ($article->data["productType"] == "book")
-    {!! $article->data["summary"] !!}
+{!! $article->data["summary"] !!}
 @else
-    {{ $article->data["summary"] }}
+{{ ($article->data["summary"]) }}
+{{-- @if (strlen($article->data["summary"]) > 500)
+{{ substr($article->data["summary"], 0, 500) . "..." }}
+@else
+{{ ($article->data["summary"]) }}
+@endif --}}
 @endif
 
 <a href="{{ $article->link }}">🛒 Voir dans la Boutique</a>
