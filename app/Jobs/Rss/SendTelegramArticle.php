@@ -4,6 +4,7 @@ namespace App\Jobs\Rss;
 
 use App\Models\Rss\Article;
 use App\Services\TelegramService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,27 +32,33 @@ class SendTelegramArticle implements ShouldQueue
      */
     public function handle()
     {
-        $telegramToken = config('services.telegram.bot_token');
-        $chatId = $this->article->data["channel"] ?? config('services.telegram.chat_id');
+        try {
+            $telegramToken = config('services.telegram.bot_token');
+            $chatId = $this->article->data["channel"] ?? config('services.telegram.chat_id');
 
-        $localPath = $this->downloadImage($this->article->image);
-        // $json = json_decode($this->article->data, true);
+            $localPath = $this->downloadImage($this->article->image);
+            // $json = json_decode($this->article->data, true);
 
-        // 2️⃣ Envoi du message avec l'image
-        $telegramService = new TelegramService(chatId: $chatId);
-        $result = $telegramService->sendWithImage(View::make($this->article->data["view"], ["article" => $this->article]), $localPath);
+            // 2️⃣ Envoi du message avec l'image
+            $telegramService = new TelegramService(chatId: $chatId);
+            $result = $telegramService->sendWithImage(View::make($this->article->data["view"], ["article" => $this->article]), $localPath);
 
-        if ($result->status() != 200) {
-            dd($result->json(), $result);
+            if ($result->status() != 200) {
+                Log::error("Erreur pour l'article : " . $this->article->id);
+                Log::error($result->json());
+                Log::error($result);
+            }
+
+            // 3️⃣ Suppression du fichier temporaire
+            Storage::delete(basename($localPath));
+
+            $this->article->sended = true;
+            $this->article->save();
+            // Optionnel : log du résultat
+            // Log::info('Telegram response', ['result' => $result]);
+        } catch (Exception $e) {
+            Log::error("Erreur pour l'article : " . $this->article->id . " " . $e->getMessage());
         }
-
-        // 3️⃣ Suppression du fichier temporaire
-        Storage::delete(basename($localPath));
-
-        $this->article->sended = true;
-        $this->article->save();
-        // Optionnel : log du résultat
-        // Log::info('Telegram response', ['result' => $result]);
     }
 
     private function downloadImage(string $url): string

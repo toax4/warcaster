@@ -46,23 +46,25 @@ class FetchWarhammerDocuments extends Command
         $searchs = [
             [
                 "postData" => [
-                    "index"=> "downloads_v2",
-                    "searchTerm"=> "",
-                    "gameSystem"=> "warhammer-age-of-sigmar",
-                    "language"=> "french"
+                    "index" => "downloads_v2",
+                    "searchTerm" => "",
+                    "gameSystem" => "warhammer-age-of-sigmar",
+                    "language" => "french"
                 ],
                 "lang" => Language::find(2),
                 "game" => WarhammerGame::where("slug", "age_of_sigmar")->first(),
+                "warcaster_tag" => "documents_fr",
             ],
             [
                 "postData" => [
-                    "index"=> "downloads_v2",
-                    "searchTerm"=> "",
-                    "gameSystem"=> "warhammer-age-of-sigmar",
-                    "language"=> "english"
+                    "index" => "downloads_v2",
+                    "searchTerm" => "",
+                    "gameSystem" => "warhammer-age-of-sigmar",
+                    "language" => "english"
                 ],
                 "lang" => Language::find(1),
                 "game" => WarhammerGame::where("slug", "age_of_sigmar")->first(),
+                "warcaster_tag" => "documents_en",
             ],
             // [
             //     "postData" => [
@@ -83,15 +85,15 @@ class FetchWarhammerDocuments extends Command
                 "https://www.warhammer-community.com/api/search/downloads/",
                 $search["postData"]
             );
-    
+
             foreach (($res->json())["hits"] as $doc) {
                 $game = $search["game"];
                 $category = WarhammerDocumentCategory::firstOrCreate($doc["id"]["download_categories"][0]);
                 $lang = $search["lang"];
 
-                $filePath = "/".$lang->code."/".$game->slug."/".$category->slug."/".$doc["id"]["slug"]."_".DateTime::createFromFormat("d/m/Y", $doc["id"]["last_updated"])->format("Y-m-d").".pdf";
+                $filePath = "/" . $lang->code . "/" . $game->slug . "/" . $category->slug . "/" . $doc["id"]["slug"] . "_" . DateTime::createFromFormat("d/m/Y", $doc["id"]["last_updated"])->format("Y-m-d") . ".pdf";
 
-                $file = $this->downloadFile("https://assets.warhammer-community.com/".$doc["id"]["file"], $filePath);
+                $file = $this->downloadFile("https://assets.warhammer-community.com/" . $doc["id"]["file"], $filePath);
                 $checksum = FileTools::getFileChecksum($file);
 
                 $document = WarhammerDocument::updateOrCreate([
@@ -113,8 +115,8 @@ class FetchWarhammerDocuments extends Command
                     Storage::disk('warhammer_documents')->put($filePath, $content);
                     // 3. (Optionnel) Supprimer l’original
                     // Storage::disk('temp')->delete($filePath);
-                    
-                    $documentVersion->remote_file = "https://assets.warhammer-community.com/".$doc["id"]["file"];
+
+                    $documentVersion->remote_file = "https://assets.warhammer-community.com/" . $doc["id"]["file"];
                     $documentVersion->local_file = $filePath;
                     $documentVersion->updated_at = DateTime::createFromFormat("d/m/Y", $doc["id"]["last_updated"]);
 
@@ -123,7 +125,8 @@ class FetchWarhammerDocuments extends Command
 
                 $data = [
                     "view" => "rss.telegram.warhammer_document",
-                    "title"=> $doc["id"]["title"],
+                    "title" => $doc["id"]["title"],
+                    "warcaster_tag" => $search["warcaster_tag"],
                 ];
 
                 if ($document->wasRecentlyCreated) {
@@ -131,7 +134,7 @@ class FetchWarhammerDocuments extends Command
 
                     Article::firstOrCreate(
                         [
-                            'link' => "https://assets.warhammer-community.com/".$doc["id"]["file"],
+                            'link' => "https://assets.warhammer-community.com/" . $doc["id"]["file"],
                             'source_id' => $articleSource->id,
                             'published_at' => DateTime::createFromFormat("d/m/Y", $doc["id"]["last_updated"]),
                         ],
@@ -146,7 +149,7 @@ class FetchWarhammerDocuments extends Command
 
                     Article::firstOrCreate(
                         [
-                            'link' => "https://assets.warhammer-community.com/".$doc["id"]["file"],
+                            'link' => "https://assets.warhammer-community.com/" . $doc["id"]["file"],
                             'source_id' => $articleSource->id,
                             'published_at' => DateTime::createFromFormat("d/m/Y", $doc["id"]["last_updated"]),
                         ],

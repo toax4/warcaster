@@ -49,6 +49,7 @@ class FetchWarhammerNews extends Command
                 ),
                 "channel" => env("TELEGRAM_CHAT_ID_NEWS_FR"),
                 "parent_div_class" => ".shared-newsGridOne",
+                "warcaster_tag" => "news_fr",
             ],
             [
                 "url" => 'https://www.warhammer-community.com/api/search/news/',
@@ -64,6 +65,7 @@ class FetchWarhammerNews extends Command
                 ),
                 "channel" => env("TELEGRAM_CHAT_ID_NEWS_EN"),
                 "parent_div_class" => "",
+                "warcaster_tag" => "news_en",
             ],
         ];
 
@@ -74,7 +76,7 @@ class FetchWarhammerNews extends Command
             );
             // $response = (new Client())->get($search["url"]);
             // $html = $response->getBody()->getContents();
-        
+
             // $crawler = new Crawler($html);
 
             // $articles = $crawler->filter($search["parent_div_class"]." " . 'li article.shared-articleCard')->each(function (Crawler $node) use ($formatter) {
@@ -88,20 +90,21 @@ class FetchWarhammerNews extends Command
             // });
 
             // dd($articles->json());
-        
+
             foreach ($articles->json()["news"] as $article) {
                 $uri = $search["base_link"] . ltrim($article["uri"], "/");
                 $json = [
                     "view" => "rss.telegram.news",
-                    "source_name"=> $source->name,
-                    "title"=> $article['title'],
-                    "news_url"=> $uri,
-                    "channel"=> $search['channel'],
-                    "topics"=> $article['topics'],
+                    "source_name" => $source->name,
+                    "title" => $article['title'],
+                    "news_url" => $uri,
+                    "channel" => $search['channel'],
+                    "topics" => $article['topics'],
+                    "warcaster_tag" => $search['warcaster_tag'],
                 ];
 
                 $formatter = $search["formatter"];
-        
+
                 $art = Article::firstOrCreate(
                     [
                         'link' => $uri,
@@ -109,7 +112,7 @@ class FetchWarhammerNews extends Command
                     ],
                     [
                         'title' => $article['title'],
-                        'image' => "https://assets.warhammer-community.com/".$article['image']["path"],
+                        'image' => "https://assets.warhammer-community.com/" . $article['image']["path"],
                         'published_at' => Carbon::createFromTimestamp($formatter->parse($article["date"]))->format('Y-m-d H:i:s'),
                         'data' => $json
                     ]
@@ -118,6 +121,5 @@ class FetchWarhammerNews extends Command
 
             $this->info("✅ " . count($articles->json()["news"]) . " articles récupérés.");
         }
-
     }
 }

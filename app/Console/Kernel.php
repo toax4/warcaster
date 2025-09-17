@@ -27,11 +27,11 @@ class Kernel extends ConsoleKernel
                 // Log::channel('cron')->info('CRON queue:work execute a ' . $date);
                 Artisan::call('queue:work --queue=high,default,imports --max-time=55');
             })
-            ->everyMinute()
-            ->name('worker:1');
+                ->everyMinute()
+                ->name('worker:1');
             // ->withoutOverlapping();
         }
-        
+
         $schedule->call(function () use ($date) {
             Artisan::call('queue:restart');
         })->everyFiveMinutes();
@@ -54,17 +54,19 @@ class Kernel extends ConsoleKernel
             Log::channel('cron')->info('CRON warhammer-news-units execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-shop');
         })
-        ->saturdays()
-        ->between('01:00', '12:00')
-        ->hourly();
+            ->saturdays()
+            ->between('01:00', '12:00')
+            ->hourly();
 
         $schedule->call(function () use ($date) {
-            Log::channel('cron')->info('CRON send telegram news execute a ' . $date);
-            // $article = Article::where("sended", false)->orderByRaw("RAND()")->first();
-            $article = Article::where("sended", 0)->first();
+            // Log::channel('cron')->info('CRON send telegram news execute a ' . $date);
+            // $article = Article::where("sended", 0)->orderBy("published_at", "asc")->orderby("id", "asc")->first();
+            $articles = Article::where("sended", 0)->orderBy("published_at", "asc")->orderby("id", "asc")->limit(3)->get();
 
-            if ($article) {
-                SendTelegramArticle::dispatch(article: $article);
+            foreach ($articles as $article) {
+                if ($article) {
+                    SendTelegramArticle::dispatch(article: $article);
+                }
             }
         })->everyMinute();
 
@@ -80,8 +82,8 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-        * Get the timezone that should be used by default for scheduled events.
-    */
+     * Get the timezone that should be used by default for scheduled events.
+     */
     protected function scheduleTimezone(): DateTimeZone|string|null
     {
         return 'Europe/Paris';
@@ -92,7 +94,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

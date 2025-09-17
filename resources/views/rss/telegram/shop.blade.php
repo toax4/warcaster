@@ -2,13 +2,13 @@
 
 $source_name = $article->source->name;
 
-if($article->data["isPreOrder"]) {
-    $source_name = str_replace("Shop", "Précommandes", $source_name);
-    // $source_name .= " / Précommandes";
-} elseif($article->data["isNewRelease"]) {
-    $source_name = str_replace("Shop", "Nouveautés", $source_name);
-    // $source_name .= " / Nouveautés";
-}
+// if($article->data["isPreOrder"]) {
+//     $source_name = str_replace("Shop", "Précommandes", $source_name);
+//     // $source_name .= " / Précommandes";
+// } elseif($article->data["isNewRelease"]) {
+//     $source_name = str_replace("Shop", "Nouveautés", $source_name);
+//     // $source_name .= " / Nouveautés";
+// }
 
 // dd($article->data["productType"]);
 if($article->data["productType"] == "book") {
@@ -45,12 +45,12 @@ if($article->data["productType"] == "book") {
 @if ($article->data["productType"] == "book")
 {!! $article->data["summary"] !!}
 @else
-{{ ($article->data["summary"]) }}
-{{-- @if (strlen($article->data["summary"]) > 500)
+{{-- {{ ($article->data["summary"]) }} --}}
+@if (strlen($article->data["summary"]) > 500)
 {{ substr($article->data["summary"], 0, 500) . "..." }}
 @else
 {{ ($article->data["summary"]) }}
-@endif --}}
+@endif
 @endif
 
 <a href="{{ $article->link }}">🛒 Voir dans la Boutique</a>
