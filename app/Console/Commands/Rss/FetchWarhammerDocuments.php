@@ -54,6 +54,7 @@ class FetchWarhammerDocuments extends Command
                 "lang" => Language::find(2),
                 "game" => WarhammerGame::where("slug", "age_of_sigmar")->first(),
                 "warcaster_tag" => "documents_fr",
+                "channel" => env("TELEGRAM_CHAT_ID_DOCUMENTS_FR"),
             ],
             [
                 "postData" => [
@@ -65,6 +66,7 @@ class FetchWarhammerDocuments extends Command
                 "lang" => Language::find(1),
                 "game" => WarhammerGame::where("slug", "age_of_sigmar")->first(),
                 "warcaster_tag" => "documents_en",
+                "channel" => env("TELEGRAM_CHAT_ID_DOCUMENTS_EN"),
             ],
             // [
             //     "postData" => [
@@ -127,6 +129,7 @@ class FetchWarhammerDocuments extends Command
                     "view" => "rss.telegram.warhammer_document",
                     "title" => $doc["id"]["title"],
                     "warcaster_tag" => $search["warcaster_tag"],
+                    "channel" => $search['channel'],
                 ];
 
                 if ($document->wasRecentlyCreated) {
