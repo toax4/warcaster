@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\Rss\ScrapWarhammerShop;
+use App\Jobs\Rss\SendDiscordArticle;
 use App\Jobs\Rss\SendTelegramArticle;
 use App\Models\Rss\Article;
 use DateTime;
@@ -66,6 +67,13 @@ class Kernel extends ConsoleKernel
             foreach ($articles as $article) {
                 if ($article) {
                     SendTelegramArticle::dispatch(article: $article);
+
+                    if ($article->data["warcaster_tag"] == "shop_other") {
+                        SendDiscordArticle::dispatch(article: $article, webhookUrl: env("DISCORD_WEBHOOK_SHOP_OTHER"));
+                    }
+                    if ($article->data["warcaster_tag"] == "shop_aos") {
+                        SendDiscordArticle::dispatch(article: $article, webhookUrl: env("DISCORD_WEBHOOK_SHOP_AOS"));
+                    }
                 }
             }
         })->everyMinute();
