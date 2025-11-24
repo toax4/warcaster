@@ -121,5 +121,85 @@ class FetchWarhammerNews extends Command
 
             $this->info("✅ " . count($articles->json()["news"]) . " articles récupérés.");
         }
+
+        $sourceMiniOfTheMonth = ArticleSource::where("slug", "miniature_of_the_month")->first();
+        if ($sourceMiniOfTheMonth == null) {
+            $sourceMiniOfTheMonth = new ArticleSource([
+                "slug" =>  "miniature_of_the_month",
+                "name" =>  "Miniature of the month",
+            ]);
+
+            $sourceMiniOfTheMonth->save();
+        }
+
+
+        // Minia of the month
+        $articleMiniOfTheMonth = Http::post(
+            "https://www.warhammer-community.com/api/search/topics/",
+            json_decode('{"locale": "en-gb","type": "articles","paginate": true,"initialPage": 1,"topic": "miniature-of-the-month","index": "topics_v2","perPage": 1,"page": 1}')
+        );
+
+        foreach ($articleMiniOfTheMonth->json()["news"] as $article) {
+            $uri = "https://www.warhammer-community.com/en-gb/" . ltrim($article["uri"], "/");
+
+            $page = Http::get(
+                $uri
+            );
+
+            // dd($page);
+            $html = $page->body();
+            // dd($html);
+            $crawler = new Crawler($html);
+
+            $articles = $crawler->filter(".article-content.wysiwyg img")->each(function (Crawler $node, $i) use ($sourceMiniOfTheMonth, $article, $uri) {
+                $imgUrl = $node->attr("src");
+
+                if (preg_match('/-mini-[a-zA-Z0-9]+.jpg/m', $imgUrl) || preg_match('/-coin-[a-zA-Z0-9]+.jpg/m', $imgUrl)) {
+                    if (preg_match('/-mini-[a-zA-Z0-9]+.jpg/m', $imgUrl)) {
+                        // Mini
+                        $topics = ["miniature-of-the-month"];
+                        $title = "Miniature of the month";
+                        $warcaster_tag = "miniature-of-the-month";
+                    } elseif (preg_match('/-coin-[a-zA-Z0-9]+.jpg/m', $imgUrl)) {
+                        // Coin
+                        $topics = ["coin-of-the-month"];
+                        $title = "Coin of the month";
+                        $warcaster_tag = "coin-of-the-month";
+                    }
+
+                    $json = [
+                        "view" => "rss.telegram.miniature-of-the-month",
+                        "source_name" => $sourceMiniOfTheMonth->name,
+                        "title" => $title,
+                        "news_url" => $uri,
+                        "topics" => $topics,
+                        "channel" => env("TELEGRAM_CHAT_ID_NEWS_FR"),
+                        "warcaster_tag" => $warcaster_tag,
+                    ];
+
+                    $formatter = new \IntlDateFormatter(
+                        'en-US',
+                        \IntlDateFormatter::SHORT,
+                        \IntlDateFormatter::NONE,
+                        null,
+                        \IntlDateFormatter::GREGORIAN,
+                        'd MMM yy'
+                    );
+
+                    $art = Article::firstOrCreate(
+                        [
+                            'link' => $imgUrl,
+                            'source_id' => $sourceMiniOfTheMonth->id,
+                        ],
+                        [
+                            'title' => $title,
+                            'image' => $imgUrl,
+                            'published_at' => Carbon::createFromTimestamp($formatter->parse($article["date"]))->format('Y-m-d H:i:s'),
+                            'data' => $json
+                        ]
+                    );
+                }
+            });
+        }
     }
 }

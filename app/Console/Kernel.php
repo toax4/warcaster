@@ -74,6 +74,9 @@ class Kernel extends ConsoleKernel
                     if ($article->data["warcaster_tag"] == "shop_aos") {
                         SendDiscordArticle::dispatch(article: $article, webhookUrl: env("DISCORD_WEBHOOK_SHOP_AOS"));
                     }
+                    if ($article->data["warcaster_tag"] == "miniature-of-the-month" || $article->data["warcaster_tag"] == "coin-of-the-month") {
+                        SendDiscordArticle::dispatch(article: $article, webhookUrl: env("DISCORD_WEBHOOK_NEWS_MINIA_OF_THE_MONTH"));
+                    }
                 }
             }
         })->everyMinute();
