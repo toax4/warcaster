@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\UnitController;
+use App\Http\Controllers\Api\FactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,11 +27,26 @@ Route::prefix('/units')
         Route::get('/', 'index')->name('index');
 
         Route::prefix('/{unit}')
-        ->group(function () {
-            Route::post('/', 'store')->name('store');
-            Route::put('/', 'update')->name('update');
+            ->group(function () {
+                Route::post('/', 'store')->name('store');
+                Route::put('/', 'update')->name('update');
 
-            Route::get("/weapons", "weapons")->name('weapons');
-            Route::get("/abilities", "abilities")->name('abilities');
-        });
+                Route::get("/weapons", "weapons")->name('weapons');
+                Route::get("/abilities", "abilities")->name('abilities');
+            });
+    });
+Route::prefix('/factions')
+    ->name('factions.')
+    ->controller(FactionController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+
+        Route::prefix('/{faction}')
+            ->group(function () {
+                Route::post('/', 'store')->name('store');
+                Route::put('/', 'update')->name('update');
+
+                Route::get("/weapons", "weapons")->name('weapons');
+                Route::get("/abilities", "abilities")->name('abilities');
+            });
     });

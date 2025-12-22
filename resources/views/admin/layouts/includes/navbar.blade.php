@@ -10,7 +10,7 @@
         <div class="menu menu-rounded menu-column menu-lg-row menu-active-bg menu-title-gray-700 menu-state-primary menu-arrow-gray-500 fw-semibold my-5 my-lg-0 align-items-stretch px-2 px-lg-0"
             id="#kt_header_menu" data-kt-menu="true">
             <!--begin:Menu item-->
-            <div class="menu-item here show menu-here-bgme-0 me-lg-2">
+            <div class="menu-item menu-here-bgme-0 me-lg-2">
                 <!--begin:Menu link-->
                 <a class="menu-link py-3" href="/">
                     <span class="menu-title">Dashboards</span>
@@ -19,6 +19,56 @@
                 <!--end:Menu link-->
             </div>
             <!--end:Menu item-->
+            <!--begin:Menu item-->
+            <div class="menu-item menu-here-bgme-0 me-lg-2">
+                <!--begin:Menu link-->
+                <a class="menu-link py-3" href="/team">
+                    <span class="menu-title">Team Builder</span>
+                    <span class="menu-arrow d-lg-none"></span>
+                </a>
+                <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+
+
+            <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="bottom-start"
+                class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                <!--begin:Menu link-->
+                <span class="menu-link py-3">
+                    <span class="menu-title">Wiki</span>
+                    <span class="menu-arrow d-lg-none"></span>
+                </span>
+                <!--end:Menu link-->
+                <!--begin:Menu sub-->
+                <div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-200px"
+                    style="">
+                    <!--begin:Menu item-->
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="menu-link py-3" href="/units">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-shield"></i>
+                            </span>
+                            <span class="menu-title">Unités</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
+                    <!--end:Menu item-->
+                    <!--begin:Menu item-->
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="menu-link py-3" href="/factions">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-flag"></i>
+                            </span>
+                            <span class="menu-title">Factions</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
+                    <!--end:Menu item-->
+                </div>
+                <!--end:Menu sub-->
+            </div>
         </div>
         <!--end::Menu-->
     </div>

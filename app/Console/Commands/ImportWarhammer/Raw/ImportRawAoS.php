@@ -28,7 +28,7 @@ class ImportRawAoS extends Command
      */
     public function handle()
     {
-        $file = Storage::disk("temp")->get("dump_aos_1.18.0.json");
+        $file = Storage::disk("temp")->get("dump_aos_1.22.0.json");
         if (!$file) {
             Log::error("Pas de fichier dump_aos.json");
             return;
@@ -59,9 +59,9 @@ class ImportRawAoS extends Command
             }
 
             $database->statement("DROP TABLE IF EXISTS `$sectionKey`");
-            $database->statement("CREATE TABLE IF NOT EXISTS `$sectionKey` (".implode(", ", $colonnes).")");
+            $database->statement("CREATE TABLE IF NOT EXISTS `$sectionKey` (" . implode(", ", $colonnes) . ")");
 
-            $this->line('<fg=cyan>'.$sectionKey.'</>');
+            $this->line('<fg=cyan>' . $sectionKey . '</>');
 
             $bar2 = $this->output->createProgressBar(count($json["data"]));
             $bar2->start();
@@ -82,15 +82,14 @@ class ImportRawAoS extends Command
                         $valuesInsert[] = $value;
                     } else {
                         $valuesInsert[] = $database->escape($value);
-                        
                     }
                 }
-                
+
                 $bar2->advance();
-    
+
                 // dd($colonnesInsert, $valuesInsert, "INSERT INTO $sectionKey (".implode(", ", $colonnesInsert).") VALUES (".implode(", ", $valuesInsert).")");
-    
-                $database->insert("INSERT INTO `$sectionKey` (".implode(", ", $colonnesInsert).") VALUES (".implode(", ", $valuesInsert).")");
+
+                $database->insert("INSERT INTO `$sectionKey` (" . implode(", ", $colonnesInsert) . ") VALUES (" . implode(", ", $valuesInsert) . ")");
             }
             $bar2->finish();
             $this->newLine();

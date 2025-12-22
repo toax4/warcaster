@@ -20,6 +20,7 @@ class FactionResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'lore' => $this->lore,
+            'rosterHeaderImage' => $this->rosterHeaderImage,
         ];
 
         return $arr;
