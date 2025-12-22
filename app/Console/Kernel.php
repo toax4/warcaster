@@ -40,6 +40,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () use ($date) {
             Log::channel('cron')->info('CRON warhammer-news execute a ' . $date);
             Artisan::call('rss:scrap-warhammer-news');
+            Artisan::call('rss:scrap-gsw-shop');
         })->hourly();
 
         $schedule->call(function () use ($date) {
