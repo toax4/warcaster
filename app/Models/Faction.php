@@ -20,7 +20,7 @@ class Faction extends Model
         'parent_id',
         'warhammer_id'
     ];
-    
+
     public $timestamps = false;
 
     public function translations()
